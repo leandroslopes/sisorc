@@ -1,0 +1,669 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+   CSS Reset
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* CONFIGURAÇÕES DE TAGS */
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    background-color: #f8f8f8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: black;    
+}
+
+a:hover {
+    text-decoration: none;
+    opacity: 0.7;
+    -moz-opacity: 0.7;
+    filter: alpha(opacity = 70)
+}
+
+input, select {
+    border: 1px solid #bababa;
+    color: #333333;
+    padding: 6px;
+    -webkit-border-radius: 5px;             
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #0092c9;
+}
+
+input[type='submit'], input[type='reset'], input[type='button'] {
+    border: none; 
+    background-color: #00478d;
+    color: #FFF;
+    padding: 5px 10px 6px 10px;
+}
+
+input[type='button']:hover, input[type='submit']:hover {
+    opacity: 0.7;
+    -moz-opacity: 0.7;
+    filter: alpha(opacity = 70) 
+}
+
+#conteudo {
+    /*background-color: #dddbdb;*/
+}
+
+/* CLASSES REUSAVEIS */
+.corpo {
+    width: auto;
+}
+
+.textoPequeno {
+    font-size: 10pt;
+}
+
+.textoCentro {
+    text-align: center
+}
+
+.textoEsq {
+    text-align: left
+}
+
+.textoDir {
+    text-align: right
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.formulario {
+    padding: 0;
+}
+
+.frmCabecalho{
+    background-color: #0092C9;
+    color: #FFF;
+    font-weight: bold;
+    text-shadow: 1px 1px #666666;
+    padding: 10px 0 10px 10px;
+}
+
+.campo {
+    font-size: 10pt;
+    padding: 5px 0 5px 80px;
+}
+
+.campo input {
+    margin: 5px 0 0 0;
+    background-color: #FFF
+}
+
+.campo select {
+    margin: 5px 0 0 0;
+}
+
+.botao {
+    position: relative;
+    padding: 0 0 10px 80px;
+}
+
+.campoPopup {
+    font-size: 11pt;
+}
+
+.campoPopup label {
+    padding: 0 10px 0 0;
+    font-size: 12pt;
+}
+
+.campoPopup, .botaoPopup {
+    padding: 10px 0 10px 10px;
+}
+
+.botao input[type='submit'] {
+    background-color: #00478D;
+    width: 90px;
+    -webkit-border-radius: 3px;             
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.negrito {
+    font-weight: bold;
+}
+
+.italico {
+    font-style: italic;
+}
+
+.msgSucesso, .msgErro, .msgCadastrado {
+    display: none
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.tabela {
+    margin: 0 auto;
+    padding: 10px 83px 10px 83px;
+    font-size: 10pt;
+}
+
+.tabela .celulaIcone {
+    width: 5px;
+}
+
+.tabela table {
+    width: 100%;
+}
+
+.tabela table thead tr th {
+    padding: 8px;
+}
+
+.tabela table tbody tr td {
+    padding: 5px;    
+}
+
+.tabela .opcao {
+    color: #FFF
+}
+
+.high {
+    background-color: #ADD8E6;
+    color: #000
+}
+
+.low {
+    background-color: #F0F0F6;
+    color: #000
+}
+
+.paginacao {
+    text-align: right;
+}
+
+.paginacao input, select{
+    padding: 2px;
+}
+
+.paginacao .first, .prev, .next, .last {
+    position: relative;
+    top: 3px;
+    margin: 0 auto;
+    padding: 0 2px;
+    cursor: pointer
+}
+
+.oculto {
+    display: none;
+}
+
+.visivel {
+    display: block;
+}
+
+#msgSucessoDialog div {
+    padding: 3px 50px;
+}
+
+#msgErroDialog div {
+    padding: 3px 80px;
+}
+
+#msgCadastradoDialog div {
+    padding: 3px 100px;
+}
+
+#msgProibicaoDialog div {
+    padding: 3px 40px;
+}
+
+#msgSucessoDialog , #msgErroDialog, #msgCadastradoDialog, #msgProibicaoDialog {
+    margin: 0 auto;
+    width: 350px;
+}
+
+#msgErroDialog span, #msgSucessoDialog span, #msgCadastradoDialog span, #msgProibicaoDialog span {
+    float: left; 
+    margin-right: .3em;
+}
+
+.dialogConfirm span {
+    float: left; 
+    margin: 0 7px 20px 0;
+}
+
+#dialogFormAddOrcCompIns hr {
+    border-style: dashed
+}
+
+.modulo {
+    padding: 10px 80px;
+}
+
+.msgErroForm {
+    display: none;
+    padding: 4px 0 6px 0;
+    background-color: #e84b4b;
+    color: #FFF;
+    text-align: center;
+}
+
+.selectComp, .selectIns, .selectObras, .selectTitulos, .selectFuncionarios {
+    width: 590px;
+}
+
+.vermelho {
+    color: #FF0000
+}
+
+.composicao, .tituloItem {
+    background-color: #FA8072;
+    color: #FFF
+}
+
+.tdOpcao {
+    background-color: #ADD8E6;
+    text-align: center
+}
+
+.tdOpcao:last-child {
+    border-left: 2px solid #F0F0F6
+}
+
+a.eddTitulo:hover, a.eddSubtit:hover {
+    text-decoration: underline;
+}
+
+.eddTitulo, .eddSubtit {
+    color: #FFF
+}
+
+#semBackground {
+    background: none
+}
+
+#imprimir {
+    padding: 10px;
+}
+
+#tblImpCabecalho {
+    width: 100%;
+    border: 2px solid #000;
+    font-size: 8pt
+}
+
+#tblImpCabecalho tr th {
+    padding: 5px 0 3px 10px;
+}
+
+#tblImpConteudo {
+    width: 100%;
+    margin: 20px 0 0 0;
+    font-size: 8pt;
+}
+
+#tblImpConteudo tr th, #tblImpConteudo tr td {
+    border: 1px solid #000;
+    padding: 5px;
+}
+
+#tblImpConteudo tr td hr {
+    border: 2px dotted #000
+}
+
+#tblImpConteudo2 {
+    width: 100%;
+    margin: 20px 0 0 0;
+    border: 2px solid #000;
+    font-weight: normal;
+    font-size: 8pt
+}
+
+#tblImpConteudo2 thead {
+    border-bottom: 2px solid #000;
+}
+
+#tblImpConteudo2 tr th, #tblImpConteudo2 tr td {
+    padding: 5px;
+}
+
+.bordaInferior {
+    border-bottom: 1px dashed #000;    
+}
+
+/* ERROS */
+input.error { 
+    border: 1px solid #f53217
+}
+
+label.error {    
+    margin-left: 5px;
+    font-size: 11pt;
+    font-weight: normal;
+    color: #f53217
+}
+
+/* LOGIN */
+#login {
+    margin: 0 auto;
+    padding: 50px 0 100px 0;
+    width: 300px;
+}
+
+#camposLogin {
+    border: 1px solid #bababa;
+    background-color: #ffffff;
+    margin: 20px 0 0 0;
+    padding: 15px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;    
+}
+
+#camposLogin label {
+    float: left
+}
+
+#campoCodigo input, #campoSenha input {
+    margin: 5px 0 5px 0;
+}
+
+#campoSenha {
+    padding: 5px 0 0 0;
+}
+
+#esqueceuSenha {
+    margin: 20px 0 0;
+    font-size: 10pt;
+    text-align: right;
+}
+
+#esqueceuSenha a:hover {
+    text-decoration: underline;
+}
+
+#botaoLogin {
+    width: 83px;
+    margin: 0 auto;
+    padding: 5px 0 0 0;
+}
+
+#erroLogin {
+    background: #ffe6e6;
+    margin: 0 auto;
+    padding: 5px 0;
+    text-align: center;
+    color: #f53217;
+    border: 1px solid #f53217;
+    -webkit-border-radius: 3px;             
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+/* COMPONENTES DE PAGINA */
+.cabecalho {
+    width: auto;
+    height: 70px;
+    background: #0092c9 url('../imagens/estilo/cabecalho.png') left top repeat-x;
+}
+
+.linha {
+    width: auto;
+    height: 3px;
+    background: #FFF;
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.tituloCabecalho {
+    margin: 20px 0 0 20px;
+    font-size: 20pt;
+    color: #ffffff;
+    float: left;
+}
+
+.tituloCabecalho h1 {
+    padding: 0 0 6px 0;
+}
+
+.tituloCabecalho label {
+    font-size: 10pt;
+}
+
+.tam16 {
+    width: 16px;
+}
+
+/* EXTRAS */
+.extrasConteudo {
+    padding: 10px 0;
+    font-size: 10pt;
+}
+
+.extras {
+    padding: 10px 0 10px 85px;
+    font-size: 10pt;
+}
+
+.extras ul li, .extrasConteudo ul li {
+    float: left;
+    padding: 0 5px 0 0;
+    color: #cc0000;
+}
+
+.extras ul li a img, .extrasConteudo ul li a img {
+    width: 16px;
+    position: absolute;
+}
+
+.extras ul li a label, .extrasConteudo ul li a label {
+    padding: 0 0 0 20px;
+    color: #cc0000;
+    cursor: pointer
+}
+
+/* MODULOS E SUBMODULOS */
+.modulos, .subModulos {    
+    padding: 0 0 0 70px;
+}
+
+.modulos li, .subModulos li {
+    display: inline-block; 
+    padding: 15px;
+
+}
+
+.modulos li a:hover, .subModulos li a:hover  {
+    color: #0092c9;
+}
+
+#imgPerfil, #imgCadastro, #imgPesquisar, #imgCadastrar, #imgAdmin, #imgRecursos,
+#imgSetor, #imgCargo, #imgModulo, #imgSubmodulo, #imgOrcamento, #imgFuncionario,
+#imgOrcamentos, #imgTipos, #imgComposicao {
+    width: 48px;
+    height: 48px;
+    padding: 0 0 5px 0;
+    position: relative;
+    margin: 0 auto;
+}
+
+#imgPerfil {
+    background: url("../imagens/icones/perfil.png")  no-repeat;
+}
+
+#imgCadastro {
+    background: url("../imagens/icones/cadastro.png")  no-repeat;
+}
+
+#imgPesquisar {
+    background: url("../imagens/icones/pesquisar.png")  no-repeat;
+}
+
+#imgCadastrar {
+    background: url("../imagens/icones/adicionar.png")  no-repeat;
+}
+
+#imgAdmin {
+    background: url("../imagens/icones/admin.png") no-repeat;
+}
+
+#imgRecursos {
+    background: url("../imagens/icones/rh.png") no-repeat;
+}
+
+#imgSetor {
+    background: url("../imagens/icones/setor.png") no-repeat;
+}
+
+#imgCargo {
+    background: url("../imagens/icones/cargo.png") no-repeat;
+}
+
+#imgModulo {
+    background: url("../imagens/icones/modulo.png") no-repeat;
+}
+
+#imgSubmodulo {
+    background: url("../imagens/icones/modulo.png") no-repeat;
+}
+
+#imgOrcamento {
+    background: url("../imagens/icones/orcamento.png") no-repeat;
+}
+
+#imgFuncionario {
+    background: url("../imagens/icones/funcionario.png") no-repeat;
+}
+
+#imgOrcamentos {
+    background: url("../imagens/icones/orcamentos.png") no-repeat;
+}
+
+#imgComposicao {
+    background: url("../imagens/icones/composicao.png") no-repeat;
+}
+
+#imgTipos {
+    background: url("../imagens/icones/tipos.png") no-repeat;
+}
+
+.titulo {
+    border: 1px solid #0092C9;
+    background-color: #F0F0F6;
+    color: #0092C9;
+    font-weight: bold;
+    text-shadow: 2px 2px #e2e2e2;
+    padding: 10px 0 10px 10px;
+    -webkit-border-radius: 5px;             
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+/* MENU ESTRUTURAL */
+.menuEstrutural {    
+    background: #0092C9;
+    color: #FFF;
+    padding: 10px 0 10px 84px;
+}
+
+.menuEstrutural a {
+    color: #FFF;
+    font-size: 10pt;
+    text-decoration: none;
+}
+
+/* INICIO */
+.opcoes ul {
+    padding: 0 0 35px 82px;
+}
+
+.opcoes ul li a {
+    background: #00478D;
+    color: #FFF;
+    font-size: 11pt;
+    padding: 8px 15px 8px 15px;
+}
+
+.meuPerfil {
+    margin: 0 0 0 58px;
+    padding: 0 0 225px 0;
+}
+
+.fotoPerfil {
+    border: 1px solid black;
+    width: 150px;
+    height: 150px;
+    margin: 25px;
+    float: left;
+}
+
+.nomePerfil {
+    margin: 149px 0 0 0;
+    float: left;
+}
+
+/* RODAPE */
+#rodape {
+    border-top: 1px solid #0092c9;
+    padding: 0 0 20px 0;
+    clear: both;
+}
+
+#copyright {
+    margin: 5px 0 0 0;
+    font-size: 9pt;
+    text-align: center;
+}

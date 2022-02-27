@@ -1,0 +1,91 @@
+SISTEMA
+Entrar no sistema - OK 
+Sair do sistema - OK
+
+PERFIL
+Alterar senha - OK
+
+CADASTRO
+Pesquisar cadastro - OK
+Cadastrar pessoa - OK
+Editar cadastro de pessoa - OK
+
+RECUSOS
+Cadastrar setor - OK
+Editar setor - OK
+Excluir setor - OK
+Cadastrar cargo - OK
+Editar cargo - OK
+Excluir cargo - OK
+Adicionar funcionario - OK 
+Editar funcionario - OK
+
+ADMINISTRACAO
+Adicionar acesso ao setor no modulo - OK
+Excluir acesso do setor no modulo - OK
+Adicionar acesso ao cargo no submodulo - OK
+Excluir acesso do cargo no submodulo - OK   
+
+Cadastrar servico - OK 
+Editar servico - OK
+Excluir servico - OK
+Cadastrar tipo - OK
+Editar tipo - OK
+Excluir tipo - OK
+Cadastrar unidade - OK
+Editar unidade - OK
+Excluir unidade - OK
+
+COMPOSICAO E INSUMO
+Cadastrar composição - OK
+Editar composição - OK
+Pesquisar composição - OK
+Cadastrar insumo - OK 
+Editar insumo - OK
+Pesquisar insumo - OK
+Adicionar insumo na composicao - OK
+Excluir insumo da composicao - OK
+
+ORCAMENTOS
+Cadastrar orçamento - OK
+Editar orçamento - OK
+Excluir orçamento - OK
+Copiar(duplicar) orcamento (c/ cronograma ou sem cronograma) - 
+
+COMPOSICAO DE CUSTO
+Adicionar composicao - OK
+Adicionar subcomposicao  - OK
+Editar subcomposicao - OK
+Excluir subcomposicao - OK
+Adicionar insumo - OK
+Editar insumo - OK
+Ativar/Desativar composicao - OK
+Excluir composicao - OK
+Copiar composicao de um orcamento - OK 
+Alterar descricao da composicao (Deve-se criar uma nova composicao avulsa para 
+ser relacionada com esta composicao que foi copiada) - OK
+Editar BDI - OK
+Editar encargos sociais - OK
+Cadastrar composicao - OK
+
+PLANILHA ORCAMENTARIA
+Cadastrar titulo - OK
+Adicionar titulo - OK
+Editar titulo - OK
+Exclui titulo - OK
+Cadastrar subtitulo - OK
+Adicionar subtitulo - OK
+Editar subtitulo - OK
+Excluir subtitulo - OK
+Adicionar composicao no titulo - OK
+Adicionar composicao no subtitulo - OK 
+Editar composicao do titulo - OK
+Editar composicao do subtitulo - OK
+Excluir composicao do titulo - OK
+Excluir composicao do subtitulo - OK 
+
+Cadastrar cronograma - OK
+
+Imprimir relatorios - OK
+
+//VERIFICA SE O FUNCIONARIO ESTA LOGADO EM TODAS AS PAGINAS (MODIFICAR A FUNCAO ESTA LOGADO)

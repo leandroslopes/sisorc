@@ -1,0 +1,436 @@
+/**
+     * Lista as composicoes de um orcamento.
+     * @param inteiro $id_orc - Id de um orcamento.
+     * @return string
+     */
+    public function listarComposicoes($id_orc) {
+        $conteudo_html = "";
+        $conteudo_vazio = "";
+        $estiloLinha = "low";
+        $ativa = "";
+
+        $conteudo_html .= "<tbody>";
+        $queryComposicoes = "SELECT a.id AS id_orc_comp, b.codigo, b.descricao, c.nome AS unidade, a.ativa "
+                . "FROM orc_composicao AS a, composicao AS b, unidade AS c "
+                . "WHERE b.id_uni = c.id AND a.id_comp = b.codigo AND a.id_orc = $id_orc";
+        $resultadoComposicoes = $this->conexao->executaQuery($queryComposicoes);
+        $qtdComposicoes = $this->conexao->getQtdRegistros($resultadoComposicoes);
+        while ($composicao = $this->conexao->getRegistros($resultadoComposicoes)) {
+            $conteudo_html .= "<tr class='composicao'>";
+            $conteudo_html .= "<td><input type='hidden' name='id_orc_comp' id='id_orc_comp' value='" . $composicao["id_orc_comp"] . "'/>SERVIÇO =></td>";
+            $conteudo_html .= "<td>" . $composicao["codigo"] . " " . $composicao["descricao"] . "</td>";
+            $conteudo_html .= "<td>UNIDADE: " . $composicao["unidade"] . "</td>";
+            $conteudo_html .= "<td>&nbsp;</td>";
+            $conteudo_html .= "<td>&nbsp;</td>";
+            $conteudo_html .= "<td>&nbsp;</td>";
+            $conteudo_html .= "<td class='textoCentro'>";
+            $conteudo_html .= "<a class='cursor opcao adicionarSubcomp'>+ Adicionar <br /> Subcomposição</a>";
+            $conteudo_html .= "</td>";
+            $conteudo_html .= "<td class='textoCentro'>";
+            $conteudo_html .= "<a class='cursor opcao addOrcCompIns'>+ Adicionar <br /> Insumo</a>";
+            $conteudo_html .= "</td>";
+
+            if ($composicao["ativa"] == OrcComposicao::ATIVADA) {
+                $ativa = "<img src='../../imagens/icones/ativar.png' title='Ativar' alt='' class='ativarComp tam16'/>";
+            } else {
+                $ativa = "<img src='../../imagens/icones/desativar.png' title='Desativar' alt='' class='ativarComp tam16'/>";
+            }
+            $conteudo_html .= "<td class='celulaIcone cursor' id=''>";
+            $conteudo_html .= "<input type='hidden' name='ativa' id='ativa' value='" . $composicao["ativa"] . "'/>$ativa</td>";
+            $conteudo_html .= "</tr>";
+
+            $querySubcomposicoes = "SELECT * FROM orc_comp_subcomp AS a WHERE a.id_orc_comp = " . $composicao["id_orc_comp"];
+            $resultadoSubcomposicoes = $this->conexao->executaQuery($querySubcomposicoes);
+            $qtdSubcomposicoes = $this->conexao->getQtdRegistros($resultadoSubcomposicoes);
+            if ($qtdSubcomposicoes > 0) {
+                while ($subcomposicao = $this->conexao->getRegistros($resultadoSubcomposicoes)) {
+                    $querySubcomposicao = "SELECT c.nome AS servico, b.codigo, b.descricao, d.nome AS unidade, a.quantidade "
+                            . "FROM orc_composicao AS a, composicao AS b, servico AS c, unidade AS d "
+                            . "WHERE a.id_comp = b.codigo AND b.id_serv = c.id AND b.id_uni = d.id AND a.id = " . $subcomposicao["id_orc_subcomp"];
+                    $resultadoSubcomposicao = $this->conexao->executaQuery($querySubcomposicao);
+                    $arraySubComp = $this->conexao->getRegistros($resultadoSubcomposicao);
+
+                    $conteudo_html .= "<tr class='$estiloLinha textoCentro'>";
+                    $conteudo_html .= "<td>";
+                    $conteudo_html .= "<input type='hidden' name='id_subcomp' id='id_subcomp' value='" . $subcomposicao["id_orc_subcomp"] . "'/>";
+                    $conteudo_html .= "<input type='hidden' name='id_sub' id='id_sub' value='" . $subcomposicao["id"] . "'/>";
+                    $conteudo_html .= $arraySubComp["servico"] . " " . $arraySubComp["codigo"] . "</td>";
+                    $conteudo_html .= "<td>" . $arraySubComp["descricao"] . "</td>";
+                    $conteudo_html .= "<td>" . $arraySubComp["unidade"] . "</td>";
+                    $conteudo_html .= "<td>" . NumeroUtil::formatar($arraySubComp["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+                    $conteudo_html .= "<td> t. insumos </td>";
+                    $conteudo_html .= "<td> qtd x ins </td>";
+                    $conteudo_html .= "<td> - </td>";
+                    $conteudo_html .= "<td> - </td>";
+                    $conteudo_html .= "<td class='celulaIcone cursor'>";
+                    $conteudo_html .= "<img src='../../imagens/icones/excluir.png' title='Excluir' alt='' class='excOrcCompSub tam16'/>";
+                    $conteudo_html .= "<img src='../../imagens/icones/editar.png' title='Editar' alt='' class='eddOrcCompSub tam16'/></td>";
+                    $conteudo_html .= "</td>";
+                    $conteudo_html .= "</tr>";
+
+                    $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                }
+            }
+
+            $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+            $queryInsumos = "SELECT a.id AS idOrcCompIns, c.nome AS servico, b.codigo, b.descricao, d.nome AS unidade, a.quantidade, a.preco_unitario, "
+                    . "DATE_FORMAT(a.data_cadastro, '%d/%m/%Y') AS dtCadastro FROM orc_comp_insumo AS a, insumo AS b, servico AS c, unidade AS d "
+                    . "WHERE a.id_ins = b.codigo AND b.id_serv = c.id AND b.id_uni = d.id AND a.id_orc_comp = " . $composicao["id_orc_comp"]
+                    . " ORDER BY c.nome ASC, b.descricao ASC";
+            $resultadoInsumos = $this->conexao->executaQuery($queryInsumos);
+            $qtdInsumos = $this->conexao->getQtdRegistros($resultadoInsumos);
+            if ($qtdInsumos > 0) {
+                $arrayInsumos = array();
+                while ($insumo = $this->conexao->getRegistros($resultadoInsumos)) {
+                    $arrayInsumos[] = $insumo;
+                }
+
+                $i = 0;
+                $servicoInicial = $arrayInsumos[$i]["servico"];
+                $valor = 0;
+                $total = 0;
+                $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                for ($index = 0; $index < count($arrayInsumos); $index++) {
+                    $servicoFinal = $arrayInsumos[$i++]["servico"];
+                    if ($servicoInicial == $servicoFinal) {
+                        $conteudo_html .= "<tr class='$estiloLinha textoCentro'>";
+                        $conteudo_html .= "<td><input type='hidden' name='idOrcCompIns' id='idOrcCompIns' value='" . $arrayInsumos[$index]["idOrcCompIns"] . "'/>";
+                        $conteudo_html .= $arrayInsumos[$index]["servico"] . " " . $arrayInsumos[$index]["codigo"] . "</td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["descricao"] . "</td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["unidade"] . "</td>";
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($arrayInsumos[$index]["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($arrayInsumos[$index]["preco_unitario"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $valor = NumeroUtil::multiplicar($arrayInsumos[$index]["quantidade"], $arrayInsumos[$index]["preco_unitario"]);
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($valor, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $conteudo_html .= "<td></td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["dtCadastro"] . "</td>";
+                        $conteudo_html .= "<td class='celulaIcone cursor'>";
+                        $conteudo_html .= "<img src='../../imagens/icones/editar.png' title='Editar' alt='' class='editarOrcCompIns tam16'/></td>";
+                        $conteudo_html .= "</td>";
+                        $conteudo_html .= "</tr>";
+
+                        $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+
+                        if ($servicoFinal == "MO") {
+                            $conteudo_html .= "<tr class='$estiloLinha'>";
+                            $conteudo_html .= "<td colspan='5' class='textoCentro'>LEIS SOCIAIS =></td>";
+                            $conteudo_html .= "<td colspan='1' class='textoCentro'>-</td>";
+                            $conteudo_html .= "<td class='textoCentro'>-</td>";
+                            $conteudo_html .= "<td colspan='2'></td>";
+                            $conteudo_html .= "</tr>";
+                            $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                            $conteudo_html .= "<tr class='$estiloLinha'>";
+                            $conteudo_html .= "<td colspan='5' class='textoCentro'>SUBTOTAL =></td>";
+                            $conteudo_html .= "<td colspan='1' class='textoCentro'></td>";
+                            $conteudo_html .= "<td class='textoCentro'>-</td>";
+                            $conteudo_html .= "<td colspan='2'></td>";
+                            $conteudo_html .= "</tr>";
+                            $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                        }
+                    } else {
+                        $conteudo_html .= "<tr class='$estiloLinha'>";
+                        $conteudo_html .= "<td colspan='5' class='textoCentro'>SUBTOTAL =></td>";
+                        $conteudo_html .= "<td colspan='1' class='textoCentro'></td>";
+                        $conteudo_html .= "<td class='textoCentro'>-</td>";
+                        $conteudo_html .= "<td colspan='2'></td>";
+                        $conteudo_html .= "</tr>";
+                        $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+
+                        $conteudo_html .= "<tr class='$estiloLinha textoCentro'>";
+                        $conteudo_html .= "<td><input type='hidden' name='idOrcCompIns' id='idOrcCompIns' value='" . $arrayInsumos[$index]["idOrcCompIns"] . "'/>";
+                        $conteudo_html .= $arrayInsumos[$index]["servico"] . " " . $arrayInsumos[$index]["codigo"] . "</td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["descricao"] . "</td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["unidade"] . "</td>";
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($arrayInsumos[$index]["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($arrayInsumos[$index]["preco_unitario"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $valor = NumeroUtil::multiplicar($arrayInsumos[$index]["quantidade"], $arrayInsumos[$index]["preco_unitario"]);
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($valor, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $conteudo_html .= "<td></td>";
+                        $conteudo_html .= "<td>" . $arrayInsumos[$index]["dtCadastro"] . "</td>";
+                        $conteudo_html .= "<td class='celulaIcone cursor'>";
+                        $conteudo_html .= "<img src='../../imagens/icones/editar.png' title='Editar' alt='' class='editarOrcCompIns tam16'/></td>";
+                        $conteudo_html .= "</td>";
+                        $conteudo_html .= "</tr>";
+                        $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                    }
+                    $total += $valor;
+                    $servicoInicial = $servicoFinal;
+                }
+
+                $conteudo_html .= "<tr class='$estiloLinha'>";
+                $conteudo_html .= "<td colspan='5' class='textoCentro'>TOTAL =></td>";
+                $conteudo_html .= "<td class='textoCentro'>" . NumeroUtil::formatar($total, NumeroUtil::NUMERO_BRA) . "</td>";
+                $conteudo_html .= "<td class='textoCentro'>-</td>";
+                $conteudo_html .= "<td colspan='2'></td>";
+                $conteudo_html .= "</tr>";
+                $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                $conteudo_html .= "<tr class='$estiloLinha'>";
+                $conteudo_html .= "<td colspan='5' class='textoCentro'>TOTAL COM BDI =></td>";
+                $conteudo_html .= "<td class='textoCentro'>-</td>";
+                $conteudo_html .= "<td class='textoCentro'>-</td>";
+                $conteudo_html .= "<td colspan='2'></td>";
+                $conteudo_html .= "</tr>";
+                $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+            } else {
+                $estiloLinha == "low" ? $estiloLinha = "high" : $estiloLinha = "low";
+                $conteudo_html .= "<tr class='low textoCentro'><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>";
+            }
+        }
+        $conteudo_html .= "</tbody>";
+        $conteudo_vazio .= "<tbody><tr class='low textoCentro'><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr></tbody>";
+        if ($qtdComposicoes > 0) {
+            return $conteudo_html;
+        } else {
+            return $conteudo_vazio;
+        }
+    }
+
+/* public function getUltimoNumItem($orcamento) {
+      $query = "SELECT MAX(a.num_item) AS ultimoItem FROM orc_titulo AS a WHERE a.id_orc = " . $orcamento->getId();
+      $resultado = $this->conexao->executaQuery($query);
+      $registro = $this->conexao->getRegistros($resultado);
+      if (!empty($registro["ultimoItem"])) {
+      return $registro["ultimoItem"] + 1;
+      } else {
+      return "01";
+      }
+      }
+      public function getNumItem($titulo) {
+      $query = "SELECT a.num_item FROM orc_titulo AS a WHERE a.id = " . $titulo->getId();
+      $resultado = $this->conexao->executaQuery($query);
+      $registro = $this->conexao->getRegistros($resultado);
+      return $registro["num_item"];
+      } */
+
+/* public function getUltimoNumItem($titulo) {
+      $orcTituloDAO = new OrcTituloDAO();
+      $query = "SELECT a.num_item AS ultimoItem FROM titulo_subtitulo AS a WHERE a.id_orc_tit = " . $titulo->getId() . " ORDER BY a.num_item DESC";
+      $resultado = $this->conexao->executaQuery($query);
+      $registro = $this->conexao->getRegistros($resultado);
+      if (!empty($registro["ultimoItem"])) {
+      return $registro["ultimoItem"] + 1;
+      } else {
+      return $orcTituloDAO->getNumItem($titulo) . "01";
+      }
+      } */
+
+/**
+     * Retorna o ultimo num_item de uma composicao de um titulo do orcamento.
+     * @param OrcTitulo $titulo
+     * @return inteiro
+     */
+    public function getUltimoNumItem($titulo) {
+        $orcTituloDAO = new OrcTituloDAO();
+        $query = "SELECT a.num_item AS ultimoItem FROM titulo_composicao AS a WHERE a.id_orc_tit = " . $titulo->getId() . " ORDER BY a.num_item DESC";
+        $resultado = $this->conexao->executaQuery($query);
+        $registro = $this->conexao->getRegistros($resultado);
+        if (!empty($registro["ultimoItem"])) {
+            return $registro["ultimoItem"] + 1;
+        } else {
+            return $orcTituloDAO->getNumItem($titulo) . "01";
+        }
+    }
+
+
+(SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade 
+ FROM titulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d 
+ WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_orc_tit = 14 
+ ORDER BY a.num_item) 
+UNION 
+(SELECT a.id, a.num_item, a.subtitulo AS descricao 
+ FROM titulo_subtitulo AS a 
+ WHERE a.id_orc_tit = 14 
+ ORDER BY a.num_item ASC)
+
+
+(SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade 
+ FROM titulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d 
+ WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_orc_tit = 14 
+ ORDER BY a.num_item) 
+UNION 
+(SELECT a.id, @id_orc_comp, a.num_item, a.subtitulo AS descricao, @unidade, @quantidade 
+ FROM titulo_subtitulo AS a 
+ WHERE a.id_orc_tit = 14 
+ ORDER BY a.num_item ASC)
+
+$queryTitComp = "SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade "
+                    . "FROM titulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d "
+                    . "WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_orc_tit = " . $titulo["id"]
+                    . " ORDER BY a.num_item";
+            $resultTitComp = $this->conexao->executaQuery($queryTitComp);
+            $qtdTitComp = $this->conexao->getQtdRegistros($resultTitComp);
+            if ($qtdTitComp > 0) {
+                $estilo_linha = "low";
+                while ($tit_comp = $this->conexao->getRegistros($resultTitComp)) {
+                    $conteudo_html .= "<tr class = '$estilo_linha'>";
+                    $conteudo_html .= "<td>";
+                    $conteudo_html .= "<input type='hidden' name='id_orc_comp' id='id_orc_comp' value='" . $tit_comp["id_orc_comp"] . "'/>";
+                    $conteudo_html .= "<input type='hidden' name='id_comp' id='id_comp' value='" . $tit_comp["id"] . "'/>";
+                    $conteudo_html .= "<input type='hidden' name='tipo_comp' id='tipo_comp' value='tit_comp'/>";
+                    $conteudo_html .= "<label>" . $tit_comp["num_item"] . "</label>";
+                    $conteudo_html .= "</td>";
+                    $conteudo_html .= "<td>" . $tit_comp["descricao"] . "</td>";
+                    $conteudo_html .= "<td>" . $tit_comp["unidade"] . "</td>";
+                    $conteudo_html .= "<td>" . NumeroUtil::formatar($tit_comp["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                    $preco = $orcCompInsumoDAO->getTotalInsumosESubcomposicoes($tit_comp["id_orc_comp"], $encargo_social, $bdi);
+                    $conteudo_html .= "<td>" . NumeroUtil::formatar($preco, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                    $total = NumeroUtil::multiplicar($tit_comp["quantidade"], $preco);
+                    $conteudo_html .= "<td>" . NumeroUtil::formatar($total, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                    $conteudo_html .= "<td class='celulaIcone'>";
+                    $conteudo_html .= "<img src='../../imagens/icones/excluir.png' alt='Excluir' class='excTitComp cursor tam16'/>";
+                    $conteudo_html .= "<img src='../../imagens/icones/editar.png' alt='Editar' class='eddTitComp cursor tam16'/>";
+                    $conteudo_html .= "</td>";
+                    $conteudo_html .= "</tr>";
+
+                    $estilo_linha == "high" ? $estilo_linha = "low" : $estilo_linha = "high";
+                }
+            } else {
+                $querySubTit = "SELECT a.id, a.num_item, a.subtitulo AS descricao "
+                        . "FROM titulo_subtitulo AS a "
+                        . "WHERE a.id_orc_tit = " . $titulo["id"] . " ORDER BY a.num_item ASC";
+                $resultSubTit = $this->conexao->executaQuery($querySubTit);
+                $qtdSubTit = $this->conexao->getQtdRegistros($resultSubTit);
+                if ($qtdSubTit > 0) {
+                    while ($subtitulo = $this->conexao->getRegistros($resultSubTit)) {
+                        $conteudo_html .= "<tr class = 'tituloItem textoEsq'>";
+                        $conteudo_html .= "<td><input type='hidden' name='id_subtit' id='id_subtit' value='" . $subtitulo["id"] . "'/>";
+                        $conteudo_html .= "<label>" . $subtitulo["num_item"] . "</label></td>";
+                        $conteudo_html .= "<td><a class='eddSubtit cursor'>" . $subtitulo["descricao"] . "</a></td>";
+                        $conteudo_html .= "<td>&nbsp;</td>";
+                        $conteudo_html .= "<td>&nbsp;</td>";
+                        $conteudo_html .= "<td>&nbsp;</td>";
+
+                        $total_subtitulo = $orcSubtituloDAO->getTotal($subtitulo["id"], $encargo_social, $bdi);
+                        $conteudo_html .= "<td>" . NumeroUtil::formatar($total_subtitulo, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $conteudo_html .= "<td class='celulaIcone'><img src='../../imagens/icones/excluir.png' alt='Excluir' class='excSubtit cursor tam16'/></td>";
+                        $conteudo_html .= "</tr>";
+
+                        $querySubtitComp = "SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade "
+                                . "FROM subtitulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d "
+                                . "WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_tit_subtit = " . $subtitulo["id"]
+                                . " ORDER BY a.num_item";
+                        $resultSubtitComp = $this->conexao->executaQuery($querySubtitComp);
+                        $qtdSubtitComp = $this->conexao->getQtdRegistros($resultSubtitComp);
+                        if ($qtdSubtitComp > 0) {
+                            $estilo_linha = "low";
+                            while ($subtit_comp = $this->conexao->getRegistros($resultSubtitComp)) {
+                                $conteudo_html .= "<tr class = '$estilo_linha'>";
+                                $conteudo_html .= "<td>";
+                                $conteudo_html .= "<input type='hidden' name='id_orc_comp' id='id_orc_comp' value='" . $subtit_comp["id_orc_comp"] . "'/>";
+                                $conteudo_html .= "<input type='hidden' name='id_comp' id='id_comp' value='" . $subtit_comp["id"] . "'/>";
+                                $conteudo_html .= "<input type='hidden' name='tipo_comp' id='tipo_comp' value='subtit_comp'/>";
+                                $conteudo_html .= "<label>" . $subtit_comp["num_item"] . "</label>";
+                                $conteudo_html .= "</td>";
+                                $conteudo_html .= "<td>" . $subtit_comp["descricao"] . "</td>";
+                                $conteudo_html .= "<td>" . $subtit_comp["unidade"] . "</td>";
+                                $conteudo_html .= "<td>" . NumeroUtil::formatar($subtit_comp["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                $preco = $orcCompInsumoDAO->getTotalInsumos($subtit_comp["id_orc_comp"], $encargo_social, $bdi);
+                                $conteudo_html .= "<td>" . NumeroUtil::formatar($preco, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                $total = NumeroUtil::multiplicar($subtit_comp["quantidade"], $preco);
+                                $conteudo_html .= "<td>" . NumeroUtil::formatar($total, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                $conteudo_html .= "<td class='celulaIcone'>";
+                                $conteudo_html .= "<img src='../../imagens/icones/excluir.png' alt='Excluir' class='excSubtitComp cursor tam16'/>";
+                                $conteudo_html .= "<img src='../../imagens/icones/editar.png' alt='Editar' class='eddSubtitComp cursor tam16'/>";
+                                $conteudo_html .= "</td>";
+                                $conteudo_html .= "</tr>";
+
+                                $estilo_linha == "low" ? $estilo_linha = "high" : $estilo_linha = "low";
+                            }
+                        } else {
+                            $conteudo_html .= "<tr class = 'low textoEsq'><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>";
+                        }
+                    }
+                } else {
+                    $conteudo_html .= "<tr class = 'low textoEsq'><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>";
+                }
+
+
+
+$queryTitComp = "SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade "
+                        . "FROM titulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d "
+                        . "WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_orc_tit = " . $titulo["id"]
+                        . " ORDER BY a.num_item";
+                $resultTitComp = $this->conexao->executaQuery($queryTitComp);
+                $qtdTitComp = $this->conexao->getQtdRegistros($resultTitComp);
+                if ($qtdTitComp > 0) {
+                    while ($tit_comp = $this->conexao->getRegistros($resultTitComp)) {
+                        $conteudo_html .= "<tr>";
+                        $conteudo_html .= "<td>" . $tit_comp["num_item"] . "</td>";
+                        $conteudo_html .= "<td>" . $tit_comp["descricao"] . "</td>";
+                        $conteudo_html .= "<td class='textoCentro'>" . $tit_comp["unidade"] . "</td>";
+                        $conteudo_html .= "<td class='textoCentro'>" . NumeroUtil::formatar($tit_comp["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $preco = $orcCompInsumoDAO->getTotalInsumos($tit_comp["id_orc_comp"], $array_request["encargo_social"]);
+                        $conteudo_html .= "<td class='textoCentro'>" . NumeroUtil::formatar($preco, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $total = NumeroUtil::multiplicar($tit_comp["quantidade"], $preco);
+                        $conteudo_html .= "<td class='textoDir'>" . NumeroUtil::formatar($total, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                        $conteudo_html .= "</tr>";
+                    }
+                } else {
+                    $querySubTit = "SELECT a.id, a.num_item, a.subtitulo FROM titulo_subtitulo AS a WHERE a.id_orc_tit = " . $titulo["id"] . " ORDER BY a.num_item ASC";
+                    $resultSubTit = $this->conexao->executaQuery($querySubTit);
+                    $qtdSubTit = $this->conexao->getQtdRegistros($resultSubTit);
+                    if ($qtdSubTit > 0) {
+                        while ($subtitulo = $this->conexao->getRegistros($resultSubTit)) {
+                            $conteudo_html .= "<tr>";
+                            $conteudo_html .= "<td>" . $subtitulo["num_item"] . "</td>";
+                            $conteudo_html .= "<td>" . $subtitulo["subtitulo"] . "</td>";
+                            $conteudo_html .= "<td>&nbsp;</td>";
+                            $conteudo_html .= "<td>&nbsp;</td>";
+                            $conteudo_html .= "<td>&nbsp;</td>";
+
+                            $total_subtitulo = $orcSubtituloDAO->getTotal($subtitulo["id"], $array_request["encargo_social"]);
+                            $conteudo_html .= "<td class='textoDir'>" . NumeroUtil::formatar($total_subtitulo, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                            $conteudo_html .= "</tr>";
+
+                            $querySubtitComp = "SELECT a.id, a.id_orc_comp, a.num_item, c.descricao, d.nome AS unidade, b.quantidade "
+                                    . "FROM subtitulo_composicao AS a, orc_composicao AS b, composicao AS c, unidade AS d "
+                                    . "WHERE a.id_orc_comp = b.id AND b.id_comp = c.codigo AND c.id_uni = d.id AND a.id_tit_subtit = " . $subtitulo["id"]
+                                    . " ORDER BY a.num_item";
+                            $resultSubtitComp = $this->conexao->executaQuery($querySubtitComp);
+                            $qtdSubtitComp = $this->conexao->getQtdRegistros($resultSubtitComp);
+                            if ($qtdSubtitComp > 0) {
+                                while ($subtit_comp = $this->conexao->getRegistros($resultSubtitComp)) {
+                                    $conteudo_html .= "<tr>";
+                                    $conteudo_html .= "<td>" . $subtit_comp["num_item"] . "</td>";
+                                    $conteudo_html .= "<td>" . $subtit_comp["descricao"] . "</td>";
+                                    $conteudo_html .= "<td class='textoCentro'>" . $subtit_comp["unidade"] . "</td>";
+                                    $conteudo_html .= "<td class='textoCentro'>" . NumeroUtil::formatar($subtit_comp["quantidade"], NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                    $preco = $orcCompInsumoDAO->getTotalInsumos($subtit_comp["id_orc_comp"], $array_request["encargo_social"]);
+                                    $conteudo_html .= "<td class='textoCentro'>" . NumeroUtil::formatar($preco, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                    $total = NumeroUtil::multiplicar($subtit_comp["quantidade"], $preco);
+                                    $conteudo_html .= "<td class='textoDir'>" . NumeroUtil::formatar($total, NumeroUtil::NUMERO_BRA) . "</td>";
+
+                                    $conteudo_html .= "</tr>";
+                                }
+                            } else {
+                                $conteudo_html .= "<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>";
+                            }
+                        }
+                    } else {
+                        $conteudo_html .= "<tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>";
+                    }
+                }
+
+private function getIdUltimoOrcComp() {
+        $query = "SELECT MAX(id) AS ultimo FROM orc_composicao";
+        $resultado = $this->conexao->executaQuery($query);
+        $orcComp = $this->conexao->getRegistros($resultado);
+        return $orcComp["ultimo"];
+    }
